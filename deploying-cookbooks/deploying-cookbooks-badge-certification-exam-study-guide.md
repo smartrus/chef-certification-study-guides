@@ -51,7 +51,9 @@ Here is a detailed breakdown of each area.
 Local mode, Audit mode, FIPS mode, as a Service
 
 `-z`, `--local-mode`
-Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo.
+
+_Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo._
+
 _Local mode is a way to run the chef-client against the chef-repo on a local machine as if it were running against the Chef server. Local mode relies on chef-zero, which acts as a very lightweight instance of the Chef server. chef-zero reads and writes to the chef_repo_path, which allows all commands that normally work against the Chef server to be used against the local chef-repo._
 
 `--audit-mode`
@@ -65,10 +67,9 @@ _The chef-client can be run as a daemon. Use the chef-client cookbook to configu
 - Configuring chef-client
 [client.rb](https://docs.chef.io/config_rb_client.html)
 
-_A client.rb file is used to specify the configuration details for the chef-client.
+_A client.rb file is used to specify the configuration details for the chef-client._
 
-This file is loaded every time this executable is run
-On UNIX- and Linux-based machines, the default location for this file is /etc/chef/client.rb; on Microsoft Windows machines, the default location for this file is C:\chef\client.rb; use the --config option from the command line to change this location
+_On UNIX- and Linux-based machines, the default location for this file is /etc/chef/client.rb; on Microsoft Windows machines, the default location for this file is C:\chef\client.rb; use the --config option from the command line to change this location
 This file is not created by default
 When a client.rb file is present in the default location, the settings contained within that client.rb file will override the default configuration settings_
 
@@ -92,8 +93,6 @@ _First, each resource in the node object is identified and a resource collection
 _Next, the chef-client configures the system based on the order of the resources in the resource collection. Each resource is mapped to a provider, which then examines the node and performs the necessary steps to complete the action. This is also referred to as the “execution phase”._
 
 _Typically, actions are processed during the execution phase of the chef-client run. However, sometimes it is necessary to run an action during the compile phase. For example, a resource can be configured to install a package during the compile phase to ensure that application is available to other resources during the execution phase._
-
-> Note: Use the chef_gem resource to install gems that are needed by the chef-client during the execution phase.
 
 - What happens during the 'compile' phase?
 
@@ -156,7 +155,9 @@ _Use node.run_state to stash transient data during a chef-client run. This data 
 
 https://github.com/chef/chef/blob/master/lib/chef/resource_collection.rb
 _ResourceCollection currently handles two tasks:_
+
 _1) Keeps an ordered list of resources to use when converging the node_
+
 _2) Keeps a unique list of resources (keyed as `type[name]`) used for notifications_
 
 ## AUTHENTICATION
@@ -186,6 +187,7 @@ _When a chef-client is run, it will perform all of the steps that are required t
 definitions, recipes?
 
 [Chef Client Overview](https://docs.chef.io/chef_client_overview.html)
+
 _Libraries -> Attributes -> LWRP -> Definitions -> Recipes
 Libraries are loaded first to ensure that all language extensions and Ruby classes are available to all resources. Next, attributes are loaded, followed by lightweight resources, and then all definitions (to ensure that any pseudo-resources within definitions are available). Finally, all recipes are loaded in the order specified by the expanded run-list._
 
@@ -194,6 +196,7 @@ Libraries are loaded first to ensure that all language extensions and Ruby class
 - What happens during the execute phase of the chef-client run?
 
 [Compile vs Execute - Common functionality](https://docs.chef.io/resource_common.html)
+
 _Each resource is executed in the order identified by the run-list, and then by the order in which each resource is listed in each recipe. Each resource in the resource collection is mapped to a provider. The provider examines the node, and then does the steps necessary to complete the action. And then the next resource is processed. Each action configures a specific part of the system. This process is also referred to as convergence. This is also referred to as the “execution phase”._
 
 - The test/repair model
@@ -203,7 +206,7 @@ _Each resource in the resource collection is mapped to a provider. The provider 
 - When do notifications get invoked?
 [Common resources](https://docs.chef.io/resource_common.html#notifications)
 
-_A notification is a property on a resource that listens to other resources in the resource collection and then takes actions based on the notification type (notifies or subscribes)_
+_A notification is a property on a resource that listens to other resources in the resource collection and then takes actions based on the notification type (notifies or subscribes)._
 
 _A resource may notify another resource to take action when its state changes._
 
@@ -230,8 +233,9 @@ _why-run mode is a way to see what the chef-client would have configured, had an
 - How do you invoke a ‘why-run’
 [chef-client.rb (executable)](https://docs.chef.io/ctl_chef_client.html)
 
-_-W, --why-run
-Run the executable in why-run mode, which is a type of chef-client run that does everything except modify the system. Use why-run mode to understand why the chef-client makes the decisions that it makes and to learn more about the current and proposed state of the system._
+`-W`, `--why-run`
+
+_Run the executable in why-run mode, which is a type of chef-client run that does everything except modify the system. Use why-run mode to understand why the chef-client makes the decisions that it makes and to learn more about the current and proposed state of the system._
 
 - What are limitations of doing a why run?
 
