@@ -397,29 +397,198 @@ sudo -N 'prep-node'
 
 # ROLES
 
+[Roles](https://docs.chef.io/roles.html)
+
 ## USING ROLES
+
 - What is the purpose of a Role?
+
+_A role is a way to define certain patterns and processes that exist across nodes in an organization as belonging to a single job function. Each role consists of zero (or more) attributes and a run-list. Each node can have zero (or more) roles assigned to it. When a role is run against a node, the configuration details of that node are compared against the attributes of the role, and then the contents of that role’s run-list are applied to the node’s configuration details. When a chef-client runs, it merges its own attributes and run-lists with those contained within each assigned role._
+
 - Creating Roles
+
+_There are several ways to manage roles:
+
+knife can be used to create, edit, view, list, tag, and delete roles.
+
+The Chef management console add-on can be used to create, edit, view, list, tag, and delete roles. In addition, role attributes can be modified and roles can be moved between environments.
+
+The chef-client can be used to manage role data using the command line and JSON files (that contain a hash, the elements of which are added as role attributes). In addition, the run_list setting allows roles and/or recipes to be added to the role.
+
+The open source Chef server can be used to manage role data using the command line and JSON files (that contain a hash, the elements of which are added as role attributes). In addition, the run_list setting allows roles and/or recipes to be added to the role.
+
+The Chef server API can be used to create and manage roles directly, although using knife and/or the Chef management console is the most common way to manage roles.
+
+The command line can also be used with JSON files and third-party services, such as Amazon EC2, where the JSON files can contain per-instance metadata stored in a file on-disk and then read by chef-solo or chef-client as required._
+
 - Role Ruby & JSON DSL formats
+
+```
+name "webserver"
+description "The base role for systems that serve HTTP traffic"
+run_list "recipe[apache2]", "recipe[apache2::mod_ssl]", "role[monitor]"
+env_run_lists "prod" => ["recipe[apache2]"], "staging" => ["recipe[apache2::staging]"], "_default" => []
+default_attributes "apache2" => { "listen_ports" => [ "80", "443" ] }
+override_attributes "apache2" => { "max_children" => "50" }
+```
+
+```
+{
+  "name": "webserver",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+    "apache2": {
+      "listen_ports": [
+        "80",
+        "443"
+      ]
+    }
+  },
+  "description": "The base role for systems that serve HTTP traffic",
+  "run_list": [
+    "recipe[apache2]",
+    "recipe[apache2::mod_ssl]",
+    "role[monitor]"
+  ],
+  "env_run_lists" : {
+    "production" : [],
+    "preprod" : [],
+    "dev": [
+      "role[base]",
+      "recipe[apache]",
+      "recipe[apache::copy_dev_configs]",
+    ],
+    "test": [
+      "role[base]",
+      "recipe[apache]"
+    ]
+  },
+  "override_attributes": {
+    "apache2": {
+      "max_children": "50"
+    }
+  }
+}
+```
+
 - Pros and Cons of Roles
+
+_PROS: A role is a way to define certain patterns and processes that exist across nodes in an organization as belonging to a single job function_
+
+[Policyfile](https://docs.chef.io/policyfile.html)
+
+_CONS: NO versioning for Roles. When running Chef without Policyfile roles are global objects. Changes to roles are applied immediately to any node that contains that role in its run-list. This can make it hard to update roles and in some use cases discourages using roles at all.
+
+Policyfile effectively replaces roles. Policyfile files are versioned automatically and new versions are applied to systems only when promoted._
+
 - The Role cookbook pattern
+
+[Writing wrapper cookbooks](https://blog.chef.io/2017/02/14/writing-wrapper-cookbooks/)
+
 - Creating Role cookbooks
+
+_Eventually you will have multiple base cookbooks and you may want to combine them into a single logical unit, so that can be tested together. Take for example a cookbook called role_my_company_website. This cookbook’s default recipe might look like the following:_
+
+```
+include_recipe 'my_company_windows_base::default'
+include_recipe 'my_company_audit::default'
+include_recipe 'my_company_iis::default'
+include_recipe 'my_company_website::default'
+```
+
 - Using Roles within a search
+
+```
+knife search role '*:*'
+```
 
 ## SETTING ATTRIBUTES AND ATTRIBUTE PRECEDENCE
+
 - What attribute precedence levels are available for Roles
+
+[About roles](https://docs.chef.io/roles.html#attribute-precedence)
+
+_`default` and `override`_
+
 - Setting attribute precedence
 
+_The attribute precedence order for roles and environments is reversed for `default` and `override` attributes. The precedence order for `default` attributes is environment, then role. The precedence order for `override` attributes is role, then environment. Applying environment `override` attributes after role `override` attributes allows the same role to be used across multiple environments, yet ensuring that values can be set that are specific to each environment (when required). For example, the role for an application server may exist in all environments, yet one environment may use a database server that is different from other environments._
+
 ## BASE ROLE & NESTED ROLES
+
 - What are nested roles?
-- Whats the purpose of a ‘base’ role?
+
+[Nested roles](http://blog.afistfulofservers.net/post/2011/03/16/a-brief-chef-tutorial-from-concentrate/)
+
+> Nested role is a role with another role included into its run_list
+
+```
+role[demo]
+  role[base]                   <---- nested role
+  recipe[foo::server]
+  recipe[foo::muninplugin]
+```
+
+- Whats the purpose of a `base` role?
+
+_Base role can be used as a starting point to create another run_list_
 
 ## USING KNIFE
+
 - The `knife role` command
+
+[knife role](https://docs.chef.io/knife_role.html)
+
+_The knife role subcommand is used to manage the roles that are associated with one or more nodes on a Chef server._
+
 - How would you set the run_list for a node using `knife`?
+
+```
+knife node run_list add NODE_NAME RUN_LIST_ITEM (options)
+```
+
 - Listing nodes
+
+```
+knife node list (options)
+```
+
 - View role details
+
+```
+knife role show ROLE_NAME
+```
+
 - Using Roles within a search
+
+```
+knife search node 'platform:windows AND roles:jenkins'
+```
+
+_To search a top-level run-list for a role named load_balancer use the knife search subcommand from the command line or the search method in a recipe. For example:_
+
+```
+$ knife search node role:load_balancer
+```
+
+and from within a recipe:
+
+```
+search(:node, 'role:load_balancer')
+```
+
+_To search an expanded run-list for all nodes with the role load_balancer use the knife search subcommand from the command line or the search method in a recipe. For example:_
+
+```
+$ knife search node roles:load_balancer
+```
+
+_and from within a recipe:_
+
+```
+search(:node, 'roles:load_balancer')
+```
 
 # UPLOADING COOKBOOKS TO CHEF SERVER
 
