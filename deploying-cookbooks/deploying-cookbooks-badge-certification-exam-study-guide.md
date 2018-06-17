@@ -709,34 +709,252 @@ $ knife upload /cookbooks
 # USING KNIFE
 
 ## BASIC KNIFE USAGE
+
 - How does knife know what Chef Server to interact with?
+
+_A knife.rb file is used to specify configuration details for knife._
+
+`chef_server_url`
+_The URL for the Chef server. For example:_
+
+```
+chef_server_url 'https://localhost/organizations/ORG_NAME'
+```
+
 - How does knife authenticate with Chef Server
+[Authentication, Authorization](https://docs.chef.io/auth.html#api-requests)
+
+_During the initial chef-client run, the chef-client will register with the Chef server using the private key assigned to the chef-validator, after which the chef-client will obtain a client.pem private key for all future authentication requests to the Chef server._
+
+_RSA public key-pairs are used to authenticate knife with the Chef server every time knife attempts to access the Chef server. This ensures that each instance of knife is properly registered with the Chef server and that only trusted users can make changes to the data._
+
+`validation_key`
+_The location of the file that contains the key used when a chef-client is registered with a Chef server. A validation key is signed using the validation_client_name for authentication. Default value: `/etc/chef/validation.pem`. For example:_
+
+```
+validation_key '/etc/chef/validation.pem'
+```
+
+`client_key`
+_The location of the file that contains the client key. Default value: `/etc/chef/client.pem`. For example:_
+
+```
+client_key '/etc/chef/client.pem'
+```
+
 - How/When would you use `knife ssh` & `knife winrm`?
+
+_Use the knife ssh subcommand to invoke SSH commands (in parallel) on a subset of nodes within an organization, based on the results of a search query made to the Chef server._
+
+```
+$ knife ssh "role:webserver" "sudo chef-client"
+```
+
+_The knife windows subcommand is used to configure and interact with nodes that exist on server and/or desktop machines that are running Microsoft Windows. Nodes are configured using WinRM, which allows native objects—batch scripts, Windows PowerShell scripts, or scripting library variables—to be called by external applications._
+
 - Verifying ssl certificate authenticity using knife
+
+_The  SSL certificates that are used by the chef-client may be verified by specifying the path to the `client.rb` file. Use the `--config` option (that is available to any knife command) to specify this path:_
+
+```
+$ knife ssl check --config /etc/chef/client.rb
+```
+
+_Verify an external server’s SSL certificate_
+
+```
+$ knife ssl check URL_or_URI
+```
+
+_for example:_
+
+```
+$ knife ssl check https://www.chef.io
+```
+
 - Where can/should you run the `knife` command from?
 
+> From workstation, from your repo directory
+
 ## KNIFE CONFIGURATION
+
 - How/where do you configure knife?
+
+`.chef/knife.rb`
+
 - Common options - cookbook_path, validation_key, chef_server_url, validation_key
+[config.rb](https://docs.chef.io/config_rb_knife.html)
+
+```
+current_dir = File.dirname(__FILE__)
+log_level                :info
+log_location             STDOUT
+node_name                "nodename"
+client_key               "#{current_dir}/user.pem"
+chef_server_url          "https://api.chef.io/organizations/orgname"
+cookbook_path            ["#{current_dir}/../cookbooks"]
+```
+
 - Setting the chef-client version to be installed during bootstrap
+
+```
+$ knife bootstrap FQDN_or_IP_ADDRESS (options)
+```
+
+`--bootstrap-version VERSION` _- The version of the chef-client to install_.
+
 - Setting defaults for command line options in knife’s configuration file
+
+To add settings to the `knife.rb` file, use the following syntax:
+```
+knife[:setting_name] = value
+```
+where value may require quotation marks (‘ ‘) if that value is a string. For example:
+```
+knife[:ssh_port] = 22
+knife[:bootstrap_template] = 'ubuntu14.04-gems'
+knife[:bootstrap_version] = ''
+knife[:bootstrap_proxy] = ''
+```
+
+[knife configure](https://docs.chef.io/knife_configure.html)
+
+_Use the knife configure subcommand to create the knife.rb and client.rb files so that they can be distributed to workstations and nodes._
+
 - Using environment variables and sharing knife configuration file with your team
+
+_Add environment variables to the `knife.rb` and share the file among your team. For example:_
+
+```
+current_dir = File.dirname(__FILE__)
+  user = ENV['OPSCODE_USER'] || ENV['USER']
+  node_name                user
+  client_key               "#{ENV['HOME']}/chef-repo/.chef/#{user}.pem"
+  validation_client_name   "#{ENV['ORGNAME']}-validator"
+  validation_key           "#{ENV['HOME']}/chef-repo/.chef/#{ENV['ORGNAME']}-validator.pem"
+  chef_server_url          "https://api.opscode.com/organizations/#{ENV['ORGNAME']}"
+  syntax_check_cache_path  "#{ENV['HOME']}/chef-repo/.chef/syntax_check_cache"
+  cookbook_path            ["#{current_dir}/../cookbooks"]
+  cookbook_copyright       "Your Company, Inc."
+  cookbook_license         "apachev2"
+  cookbook_email           "cookbooks@yourcompany.com"
+
+  # Amazon AWS
+  knife[:aws_access_key_id] = ENV['AWS_ACCESS_KEY_ID']
+  knife[:aws_secret_access_key] = ENV['AWS_SECRET_ACCESS_KEY']
+```
+
 - Managing proxies
 
+_In an environment that requires proxies to reach the Internet, many Chef commands will not work until they are configured correctly. To configure Chef to work in an environment that requires proxies, set the `http_proxy`, `https_proxy`, `ftp_proxy`, and/or `no_proxy` environment variables to specify the proxy settings using a lowercase value._
+
 ## KNIFE PLUGINS
-- Common knife pluginsWhat
+
+- Common knife plugins
+
+_Knife functionality can be extended with plugins, which work the same as built-in subcommands (including common options). Knife plugins have been written to interact with common cloud providers, to simplify common Chef tasks, and to aid in Chef workflows._ `chef gem install PLUGIN_NAME`
+
+```
+knife-acl
+knife-azure
+knife-ec2
+knife-eucalyptus
+knife-google
+knife-linode
+knife-lpar
+knife-openstack
+knife-push
+knife-rackspace
+knife-vcenter
+knife-windows
+```
+
 - What is 'knife ec2' plugin
+
+_The knife ec2 subcommand is used to manage API-driven cloud servers that are hosted by Amazon EC2. ex:_
+
+```
+knife ec2 server create -r 'role[webserver]' -I ami-cd0fd6be -f t2.micro --aws-access-key-id 'Your AWS Access Key ID' --aws-secret-access-key "Your AWS Secret Access Key"`
+```
+
 - What is 'knife windows' plugin
+
+_The `knife windows` subcommand is used to configure and interact with nodes that exist on server and/or desktop machines that are running Microsoft Windows. Nodes are configured using WinRM, which allows native objects—batch scripts, Windows PowerShell scripts, or scripting library variables—to be called by external applications. The `knife windows` subcommand supports NTLM and Kerberos methods of authentication. ex:_
+
+```
+knife bootstrap windows winrm web1.cloudapp.net -r 'server::web' -x 'proddomain\webuser' -P 'password'
+```
+
 - What is ‘knife block’ plugin?
+
+https://github.com/knife-block/knife-block
+
+_The `knife block` plugin has been created to enable the use of multiple knife.rb files against multiple chef servers. The premise is that you have a "block" in which you store all your "knives" and you can choose the one best suited to the task. Knife looks for `knife.rb` in `~/.chef` - all this script does is create a symlink from the required configuration to `knife.rb` so that knife can act on the appropriate server. For example:_
+
+```
+knife block use <server_name>
+```
+
 - What is ‘knife spork’ plugin?
+
+_The `knife-spork` plugin adds workflow that enables multiple developers to work on the same Chef server and repository, but without stepping on each other’s toes. This plugin is designed around the workflow at Etsy, where several people work in the same repository and Chef server simultaneously. For example:_
+
+```
+knife spork bump
+```
+
 - Installing knife plugins
 
+```
+chef gem install PLUGIN_NAME
+```
+
 ## TROUBLESHOOTING
+
 - Troubleshooting Authentication
+[Troubleshooting](https://docs.chef.io/errors.html)
+
+_There are multiple causes of the Chef 401 “Unauthorized” error, so please use the sections by the link above to find the error message that most closely matches your output._
+
 - Using `knife ssl check` command
+[knife ssl](https://docs.chef.io/knife_ssl_check.html)
+
+_Use the `knife ssl check` subcommand to verify the SSL configuration for the Chef server or a location specified by a URL or URI. Invalid certificates will not be used by OpenSSL. When this command is run, the certificate files (`*.crt` and/or `*.pem`) that are located in the `/.chef/trusted_certs` directory are checked to see if they have valid X.509 certificate properties. A warning is returned when certificates do not have valid X.509 certificate properties or if the `/.chef/trusted_certs` directory does not contain any certificates._
+
+```
+knife ssl check (options)
+```
+
 - Using `knife ssl fetch` command
+
+_Run the `knife ssl fetch` to download the self-signed certificate from the Chef server to the `/.chef/trusted_certs` directory on a workstation._
+
 - Using '-VV' flag
+
+`-V`, `--verbose` _Set for more verbose outputs. Use `-VV` for maximum verbosity_.
+
 - Setting log levels and log locations
+
+_Use the log resource to create log entries. The log resource behaves like any other resource: built into the resource collection during the compile phase, and then run during the execution phase. (To create a log entry that is not built into the resource collection, use `Chef::Log` instead of the log resource.)_
+
+```
+log 'message' do
+  message 'A message add to the log.'
+  level :info
+end
+```
+
+_Log Level	Syntax_
+
+`Fatal`	`Chef::Log.fatal('string')`
+
+`Error`	`Chef::Log.error('string')`
+
+`Warn`	`Chef::Log.warn('string')`
+
+`Info`	`Chef::Log.info('string')`
+
+`Debug`	`Chef::Log.debug('string')`
 
 # BOOTSTRAPPING
 
