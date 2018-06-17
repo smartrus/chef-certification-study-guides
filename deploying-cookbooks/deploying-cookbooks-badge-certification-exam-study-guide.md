@@ -51,7 +51,6 @@ Here is a detailed breakdown of each area.
 Local mode, Audit mode, FIPS mode, as a Service
 
 `-z`, `--local-mode`
-
 _Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo._
 
 _Local mode is a way to run the chef-client against the chef-repo on a local machine as if it were running against the Chef server. Local mode relies on chef-zero, which acts as a very lightweight instance of the Chef server. chef-zero reads and writes to the chef_repo_path, which allows all commands that normally work against the Chef server to be used against the local chef-repo._
@@ -234,7 +233,6 @@ _why-run mode is a way to see what the chef-client would have configured, had an
 [chef-client.rb (executable)](https://docs.chef.io/ctl_chef_client.html)
 
 `-W`, `--why-run`
-
 _Run the executable in why-run mode, which is a type of chef-client run that does everything except modify the system. Use why-run mode to understand why the chef-client makes the decisions that it makes and to learn more about the current and proposed state of the system._
 
 - What are limitations of doing a why run?
@@ -242,29 +240,160 @@ _Run the executable in why-run mode, which is a type of chef-client run that doe
 _If the action is :start and the service is not running, then start the service (if it is not running) and do nothing (if it is running). What about a service that is installed from a package? The chef-client cannot check to see if the service is running until after the package is installed. A simple question that why-run mode can answer is what the chef-client would say about the state of the service after installing the package because service actions often trigger notifications to other resources. So it can be important to know in advance that any notifications are being triggered correctly._
 
 # ENVIRONMENTS
+[About environments](https://docs.chef.io/environments.html)
 
 ## WHAT IS AN ENVIRONMENT/USE CASES
+
 - What is the purpose of an Environments?
-- What is the '\_default' environment?
+
+_An environment is a way to map an organization’s real-life workflow to what can be configured and managed when using Chef server. Every organization begins with a single environment called the `_default` environment, which cannot be modified (or deleted). Additional environments can be created to reflect each organization’s patterns and workflow. For example, creating `production`, `staging`, `testing`, and `development` environments. Generally, an environment is also associated with one (or more) cookbook versions._
+
+- What is the `_default` environment?
+
+_Every organization must have at least one environment. Every organization starts out with a single environment that is named _default, which ensures that at least one environment is always available to the Chef server. The _default environment cannot be modified in any way. Nodes, roles, run-lists, cookbooks (and cookbook versions), and attributes specific to an organization can only be associated with a custom environment._
+
 - What information can be specified in an Environment?
+
+_Nodes, roles, run-lists, cookbooks (and cookbook versions), and attributes specific to an organization can only be associated with a custom environment._
+
 - What happens if you do not specify an Environment?
+
+_It is set to `_default`. Every organization starts out with a single environment that is named `_default`_
+
 - Creating environments in Ruby
+
+```
+
+name 'environment_name'
+description 'environment_description'
+cookbook OR cookbook_versions  'cookbook' OR 'cookbook' => 'cookbook_version'
+default_attributes 'node' => { 'attribute' => [ 'value', 'value', 'etc.' ] }
+override_attributes 'node' => { 'attribute' => [ 'value', 'value', 'etc.' ] }
+
+```
+
 - Creating environments in JSON
+
+```
+
+{
+  "name": "dev",
+  "default_attributes": {
+    "apache2": {
+      "listen_ports": [
+        "80",
+        "443"
+      ]
+    }
+  },
+  "json_class": "Chef::Environment",
+    "description": "",
+    "cookbook_versions": {
+    "couchdb": "= 11.0.0"
+  },
+  "chef_type": "environment"
+  }
+
+  ```
+
 - Using environments within a search
 
+```
+knife search node "chef_environment:QA AND platform:centos"
+```
+
+_Or, to include the same search in a recipe, use a code block similar to:_
+
+```
+qa_nodes = search(:node,"chef_environment:QA")
+qa_nodes.each do |qa_node|
+    # Do useful work specific to qa nodes only
+end
+```
+
 ## ATTRIBUTE PRECEDENCE AND COOKBOOK CONSTRAINTS
+
 - What attribute precedence levels are available for Environments
+
+[About environments](https://docs.chef.io/roles.html#attribute-precedence)
+
+_`default` and `override`_
+
 - Overriding Role attributes
+
+`override`
+_Applying environment override attributes after role override attributes allows the same role to be used across multiple environments, yet ensuring that values can be set that are specific to each environment (when required)._
+
 - Syntax for setting cookbook constraints.
+
+```
+  "cookbook_versions": {
+    "couchdb": "= 11.0.0"
+  },
+  ```
+
 - How would you allow only patch updates to a cookbook within an environment?
 
+```
+  "cookbook_versions": {
+    "couchdb": "~> 11.0.0"
+  },
+  ```
+
 ## SETTING AND VIEWING ENVIRONMENTS
+
+[About environments](https://docs.chef.io/roles.html#attribute-precedence)
+
+[knife environment](https://docs.chef.io/knife_environment.html)
+
 - How can you list Environments?
+
+```
+$ knife environment list
+```
+
 - How can you move a node to a specific Environment?
+
+```
+$ knife node environment_set NODE_NAME ENVIRONMENT_NAME (options)
+```
+
 - Using `knife exec` to bulk change Environments.
+
+```
+knife exec -E "nodes.transform(“chef_environment:dev“) \
+  {|n| puts n.run_list.remove(“recipe[chef-client::upgrade]“); n.save }"
+```
+
 - Using 'chef_environment' global variable in recipes
+
+```
+if node.chef_environment == "dev"
+  # stuff
+end
+```
+
 - Environment specific knife plugins, e.g. `knife flip`
+[Community plugins](https://docs.chef.io/plugin_community.html)
+
+`knife-flip` - _A knife plugin to move a node, or all nodes in a role, to a specific environment_
+
+`knife-bulkchangeenv` - _A plugin for Chef::Knife which lets you move all nodes in one environment into another._
+
+`knife-env-diff` - _Adds the ability to diff the cookbook versions for two (or more) environments._
+
+`knife-set-environment` - _Adds the ability to set a node environment._
+
+`knife-spork` - _Adds a simple environment workflow so that teams can more easily work together on the same cookbooks and environments._
+
+`knife-whisk` - _Adds the ability to create new servers in a team environment._
+
 - Bootstrapping a node into a particular Environment
+
+```
+knife bootstrap <IPorFQDN> --run-list 'cookbook::default' --environment 'dev' -x 'annie' -i '~/.ssh/id_rsa' --
+sudo -N 'prep-node'
+```
 
 # ROLES
 
