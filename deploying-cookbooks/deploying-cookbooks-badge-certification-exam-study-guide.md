@@ -199,6 +199,9 @@ Libraries are loaded first to ensure that all language extensions and Ruby class
 _Each resource is executed in the order identified by the run-list, and then by the order in which each resource is listed in each recipe. Each resource in the resource collection is mapped to a provider. The provider examines the node, and then does the steps necessary to complete the action. And then the next resource is processed. Each action configures a specific part of the system. This process is also referred to as convergence. This is also referred to as the “execution phase”._
 
 - The test/repair model
+[Learn the Chef basics](https://learn.chef.io/modules/learn-the-basics#/)
+
+_Chef applies changes only when they are necessary._
 
 _Each resource in the resource collection is mapped to a provider. The provider examines the node (tests), and then does the steps necessary to complete the action (repairs)_
 
@@ -407,19 +410,19 @@ _A role is a way to define certain patterns and processes that exist across node
 
 - Creating Roles
 
-_There are several ways to manage roles:
+_There are several ways to manage roles:_
 
-knife can be used to create, edit, view, list, tag, and delete roles.
+_knife can be used to create, edit, view, list, tag, and delete roles._
 
-The Chef management console add-on can be used to create, edit, view, list, tag, and delete roles. In addition, role attributes can be modified and roles can be moved between environments.
+_The Chef management console add-on can be used to create, edit, view, list, tag, and delete roles. In addition, role attributes can be modified and roles can be moved between environments._
 
-The chef-client can be used to manage role data using the command line and JSON files (that contain a hash, the elements of which are added as role attributes). In addition, the run_list setting allows roles and/or recipes to be added to the role.
+_The chef-client can be used to manage role data using the command line and JSON files (that contain a hash, the elements of which are added as role attributes). In addition, the run_list setting allows roles and/or recipes to be added to the role._
 
-The open source Chef server can be used to manage role data using the command line and JSON files (that contain a hash, the elements of which are added as role attributes). In addition, the run_list setting allows roles and/or recipes to be added to the role.
+_The open source Chef server can be used to manage role data using the command line and JSON files (that contain a hash, the elements of which are added as role attributes). In addition, the run_list setting allows roles and/or recipes to be added to the role._
 
-The Chef server API can be used to create and manage roles directly, although using knife and/or the Chef management console is the most common way to manage roles.
+_The Chef server API can be used to create and manage roles directly, although using knife and/or the Chef management console is the most common way to manage roles._
 
-The command line can also be used with JSON files and third-party services, such as Amazon EC2, where the JSON files can contain per-instance metadata stored in a file on-disk and then read by chef-solo or chef-client as required._
+_The command line can also be used with JSON files and third-party services, such as Amazon EC2, where the JSON files can contain per-instance metadata stored in a file on-disk and then read by chef-solo or chef-client as required._
 
 - Role Ruby & JSON DSL formats
 
@@ -593,15 +596,115 @@ search(:node, 'roles:load_balancer')
 # UPLOADING COOKBOOKS TO CHEF SERVER
 
 ## USING BERKSHELF
+
+[About Berkshelf](https://docs.chef.io/berkshelf.html)
+
 - The Berksfile & Berksfile.lock
+
+_A Berksfile describes the set of sources and dependencies needed to use a cookbook. It is used in conjunction with the berks command._
+
+_A Berksfile is a Ruby file, in which sources, dependencies, and options may be specified. Berksfiles are modelled closely on Bundler’s Gemfile. The syntax is as follows:_
+
+```
+source "https://supermarket.chef.io"
+metadata
+cookbook "NAME" [, "VERSION_CONSTRAINT"] [, SOURCE_OPTIONS]
+```
+
+_Running the install command also creates a Berksfile.lock, which represents exactly which cookbook versions Berkshelf installed. This file ensures that someone else can check the cookbook out of git and get exactly the same dependencies as you._
+
+_Use `berks install` to install cookbooks into the cache. This command generates the Berkshelf lock file that ensures consistency._
+
 - `berks install` and `berks upload`
+
+_When you run `berks install`, cookbooks mentioned as `depends` will be downloaded from Supermarket into the cache_
+
+_You can upload all cookbooks to your Chef server with berks upload:_
+
+```
+$ berks upload
+```
+
 - Where are dependant cookbooks stored locally?
+
+```
+~/.berkshelf/cookbooks/
+```
+
 - Limitations of using knife to upload cookbooks
+
+
+
 - Listing cookbooks on Chef Server using knife
+
+```
+$ knife cookbook list (options)
+```
+
+_This argument has the following options:_
+
+`-a`, `--all`
+_Return all available versions for every cookbook._
+
+`-w`, `--with-uri`
+_Show the corresponding URIs._
+
 - What happens if you try to upload the same version of a cookbook?
+
+[StackOverFlow QA](https://stackoverflow.com/questions/28957578/chef-cookbook-version-delete-or-update-specific-version)
+
+_When you run knife cookbook upload it will update whatever version is listed in your local metadata.rb file. (unless it is frozen). If you use Berks, you'll need to add the --force option to overwrite an existing version._
+
 - How can you upload the same version of a cookbook?
+
+```
+$ knife cookbook upload --all --cookbook-path cookbooks
+Uploading build-essential [1.3.4]
+Uploading chef-server    [2.0.0]
+Uploading python         [1.4.1]
+Uploading yum            [2.1.0]
+ERROR: Version 1.3.4 of cookbook build-essential is frozen. Use --force to override.
+WARNING: Not updating version constraints for some cookbooks in the environment as the cookbook is frozen.
+Uploaded all cookbooks.
+```
+
 - Downloading cookbooks from Chef Server
+
+```
+$ knife cookbook download COOKBOOK_NAME [COOKBOOK_VERSION] (options)
+```
+
+_This argument has the following options:_
+
+`-d DOWNLOAD_DIRECTORY`, `--dir DOWNLOAD_DIRECTORY`
+_The directory in which cookbooks are located._
+
+`-f`, `--force`
+_Overwrite an existing directory._
+
+`-N`, `--latest`
+_Download the most recent version of a cookbook._
+
 - Bulk uploading cookbooks using knife
+
+```
+$ knife cookbook upload [COOKBOOK_NAME...] (options)
+```
+
+`-a`, `--all`
+_Upload all cookbooks._
+
+_Upload the /cookbooks directory. Browse to the top level of the chef-repo and enter:_
+
+```
+$ knife upload cookbooks
+```
+
+_or from anywhere in the chef-repo, enter:_
+
+```
+$ knife upload /cookbooks
+```
 
 # USING KNIFE
 
