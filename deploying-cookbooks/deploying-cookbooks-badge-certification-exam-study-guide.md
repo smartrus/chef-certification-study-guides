@@ -1050,12 +1050,50 @@ _On UNIX- and Linux-based machines: The second shell script executes the `chef-c
 _On Microsoft Windows machines: The batch file that is derived from the `windows-chef-client-msi.erb` bootstrap template executes the `chef-client` binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial `knife bootstrap` subcommand._
 
 # POLICY FILES
+[About policyfile](https://docs.chef.io/policyfile.html)
 
 ## BASIC KNOWLEDGE AND USAGE
+
 - What are policy files, and what problems do they solve?
+
+_A Policyfile is an optional way to manage role, environment, and community cookbook data with a single document that is uploaded to the Chef server. The file is associated with a group of nodes, cookbooks, and settings. When these nodes perform a Chef client run, they utilize recipes specified in the Policyfile run-list._
+
 - Policy file use cases?
+
+_For some users of Chef, Policyfile will make it easier to test and promote code safely with a simpler interface. Policyfile improves the user experience and resolves real-world problems that some workflows built around Chef must deal with. The following sections discuss in more detail some of the good reasons to use Policyfile, including:_
+
+_- Focus the workflow on the entire system_
+
+_- Safer development workflows_
+
+_- Less expensive computation_
+
+_- Code visibility_
+
+_- Role mutability_
+
+_- Cookbook mutability_
+
+_- Replaces Berkshelf and the environment cookbook pattern_
+
 - What can/not be configured in a policy file?
+
+```
+name "jenkins-master"
+run_list "java", "jenkins::master", "recipe[policyfile_demo]"
+default_source :supermarket, "https://mysupermarket.example"
+cookbook "policyfile_demo", path: "cookbooks/policyfile_demo"
+cookbook "jenkins", "~> 2.1"
+cookbook "mysql", github: "chef-cookbooks/mysql", branch: "master"
+```
+
 - Policy files and Chef Workflow
+
+_Focused System Workflows: The knife command line tool maps very closely to the Chef server API and the objects defined by it: roles, environments, run-lists, cookbooks, data bags, nodes, and so on. The chef-client assembles these pieces at run-time and configures a host to do useful work._
+
+_Policyfile focuses that workflow onto the entire system, rather than the individual components. For example, Policyfile describes whole systems, whereas each individual revision of the Policyfile.lock.json file uploaded to the Chef server describes a part of that system, inclusive of roles, environments, cookbooks, and the other Chef server objects necessary to configure that part of the system._
+
+_Safer Workflows: Policyfile encourages safer workflows by making it easier to publish development versions of cookbooks to the Chef server without the risk of mutating the production versions and without requiring a complicated versioning scheme to work around cookbook mutability issues. Roles are mutable and those changes are applied only to the nodes specified by the policy. Policyfile does not require any changes to your normal workflows. Use the same repositories you are already using, the same cookbooks, and workflows. Policyfile will prevent an updated cookbook or role from being applied immediately to all machines._
 
 # SEARCH
 
