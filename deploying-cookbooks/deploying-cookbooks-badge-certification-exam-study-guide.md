@@ -1098,17 +1098,116 @@ _Safer Workflows: Policyfile encourages safer workflows by making it easier to p
 # SEARCH
 
 ## BASIC SEARCH USAGE
+
 - What information is indexed and available for search?
+
+_- client_
+
+_- environment_
+
+_- node_
+
+_- role_
+
+_- data bag_
+
 - Search operators and query syntax
+
+_A search query is comprised of two parts: the key and the search pattern. A search query has the following syntax:_ `key:search_pattern`
+_where key is a field name that is found in the JSON description of an indexable object on the Chef server (a role, node, client, environment, or data bag) and search_pattern defines what will be searched for, using one of the following search patterns: exact, wildcard, range, or fuzzy matching. Both key and search_pattern are case-sensitive; key has limited support for multiple character wildcard matching using an asterisk (“*”) (and as long as it is not the first character)._
+
+```
+knife search INDEX SEARCH_QUERY
+```
+_defaults to search for node_
+```
+knife search '*:*' -i
+```
+_is the same as_
+```
+$ knife search node '*:*' -i
+```
+
 - Wildcards, range and fuzzy matching
 
+_- To search for any node that contains the specified key, enter the following:_
+
+```
+knife search node 'foo:*'
+```
+
+_- To search using an inclusive range, enter the following:_
+
+```
+knife search sample "id:[bar TO foo]"
+```
+
+_- To use a fuzzy search pattern enter something similar to:_
+
+```
+knife search client "name:boo~"
+```
+
 ## SEARCH USING KNIFE AND IN A RECIPE
+
 - Knife command line search syntax
+
+```
+knife search INDEX SEARCH_QUERY
+```
+
 - Recipe search syntax
 
+```
+search(:node, "key:attribute")
+```
+
 ## FILTERING RESULTS
+
 - How do you filter on Chef Server
+
+_Use `:filter_result` as part of a search query to filter the search output based on the pattern specified by a Hash. Only attributes in the Hash will be returned._
+
+_The syntax for the search method that uses :filter_result is as follows:_
+
+```
+search(:index, 'query',
+  :filter_result => { 'foo' => [ 'abc' ],
+                      'bar' => [ '123' ],
+                      'baz' => [ 'sea', 'power' ]
+                    }
+      ).each do |result|
+  puts result['foo']
+  puts result['bar']
+  puts result['baz']
+end
+```
+_where:_
+
+_- `:index` is of name of the index on the Chef server against which the search query will run: `:client`, `:data_bag_name`, `:environment`, `:node`, and `:role`_
+
+_- 'query' is a valid search query against an object on the Chef server_
+
+_- `:filter_result` defines a Hash of values to be returned_
+
+_For example:_
+
+```
+search(:node, 'role:web',
+  :filter_result => { 'name' => [ 'name' ],
+                      'ip' => [ 'ipaddress' ],
+                      'kernel_version' => [ 'kernel', 'version' ]
+                    }
+      ).each do |result|
+  puts result['name']
+  puts result['ip']
+  puts result['kernel_version']
+end
+```
+
 - Selecting attributes to be returned
+
+_Use :filter\_result as part of a search query to filter the search output based on the pattern specified by a Hash. Only attributes in the Hash will be returned._
 
 # CHEF SOLO
 
