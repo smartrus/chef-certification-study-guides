@@ -1281,15 +1281,93 @@ _Unlike chef-client, where the node object is stored on the Chef server, chef-so
 # DATA BAGS
 
 ## WHAT IS A DATA_BAG
+
 - When might you use a data_bag?
+
+_A data bag is a global variable that is stored as JSON data and is accessible from a Chef server. A data bag is indexed for searching and can be loaded by a recipe or accessed during a search. It is used when different clients need to access the same information._
+
 - Indexing data_bags
+
+_Any search for a data bag (or a data bag item) must specify the name of the data bag and then provide the search query string that will be used during the search. For example, to use knife to search within a data bag named “admin\_data” across all items, except for the “admin\_users” item, enter the following:_
+
+```
+knife search admin_data "(NOT id:admin_users)"
+```
+
+_Or, to include the same search query in a recipe, use a code block similar to:_
+
+```
+search(:admin_data, "NOT id:admin_users")
+```
+
+_Data bags can be accessed through the search indexes. Use this approach when more than one data bag item is required or when the contents of a data bag are looped through. The search indexes will bulk-load all of the data bag items, which will result in a lower overhead than if each data bag item were loaded by name._
+
+_To load the secret from a file:_
+
+```
+data_bag_item('bag', 'item', IO.read('secret_file'))
+```
+
+_To load a single data bag item named admins:_
+
+```
+data_bag('admins')
+```
+
+_The contents of a data bag item named justin:_
+
+```
+data_bag_item('admins', 'justin')
+```
+
 - What is a data_bag?
+
+_A data bag is a global variable that is stored as JSON data and is accessible from a Chef server. A data bag is indexed for searching and can be loaded by a recipe or accessed during a search._
+
 - Data_bag and Chef-solo
 
+_chef-solo can load data from a data bag as long as the contents of that data bag are accessible from a directory structure that exists on the same machine as chef-solo. The location of this directory is configurable using the data_bag_path option in the solo.rb file. The name of each sub-directory corresponds to a data bag and each JSON file within a sub-directory corresponds to a data bag item. Search is not available in recipes when they are run with chef-solo; use the data_bag() and data_bag_item() functions to access data bags and data bag items._
+
 ## DATA_BAG ENCRYPTION
+
 - How do you encrypt a data_bag
+
+_A data bag item is encrypted using a knife command similar to:_
+```
+knife data bag create passwords mysql --secret-file /tmp/my_data_bag_key
+```
+_where “passwords” is the name of the data bag, “mysql” is the name of the data bag item, and “/tmp/my_data_bag_key” is the path to the location in which the file that contains the secret-key is located. knife will ask for user credentials before the encrypted data bag item is saved._
+
 - What is Chef Vault
 
+_chef-vault is a RubyGems package that is included in the Chef development kit. chef-vault allows the encryption of a data bag item by using the public keys of a list of nodes, allowing only those nodes to decrypt the encrypted values. chef-vault uses the knife vault subcommand._
+
 ## USING DATA_BAGS
+
 - How do you create a data_bag?
+
+_knife can be used to create data bags and data bag items when the knife data bag subcommand is run with the create argument. For example:_
+
+```
+knife data bag create DATA_BAG_NAME (DATA_BAG_ITEM)
+```
+
+_knife can be used to update data bag items using the from file argument:_
+
+```
+knife data bag from file BAG_NAME ITEM_NAME.json
+```
+
+_As long as a file is in the correct directory structure, knife will be able to find the data bag and data bag item with only the name of the data bag and data bag item. For example:_
+
+```
+knife data bag from file BAG_NAME ITEM_NAME.json
+```
+
 - How can you edit a data_bag
+
+_if you are in the “admins” directory and make changes to the file charlie.json, then to upload that change to the Chef server use the following command:_
+
+```
+knife data bag from file admins charlie.json
+```
