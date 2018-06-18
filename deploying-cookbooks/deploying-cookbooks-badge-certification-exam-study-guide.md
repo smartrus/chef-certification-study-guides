@@ -1212,13 +1212,71 @@ _Use :filter\_result as part of a search query to filter the search output based
 # CHEF SOLO
 
 ## WHAT CHEF SOLO IS
+[About chef solo](https://docs.chef.io/chef_solo.html)
+
 - Advantages & disadvantages of Chef-solo vs Chef Server
+
+_chef-solo is a command that executes chef-client in a way that does not require the Chef server in order to converge cookbooks. chef-solo uses chef-client’s Chef local mode, and does not support the following functionality present in chef-client / server configurations:_
+
+_- Centralized distribution of cookbooks_
+_- A centralized API that interacts with and integrates infrastructure components_
+_- Authentication or authorization_
+
 - Chef-solo executable and options
+
+```
+chef-solo OPTION VALUE OPTION VALUE ...
+```
+
 - Cookbooks, nodes and attributes
+
+_chef-solo supports two locations from which cookbooks can be run:
+
+_- A local directory._
+
+_- A URL at which a tar.gz archive is located._
+
+_Unlike chef-client, where the node object is stored on the Chef server, chef-solo stores its node objects as JSON files on local disk. By default, chef-solo stores these files in a nodes folder in the same directory as your cookbooks directory. You can control the location of this directory via the node_path value in your configuration file._
+
+_chef-solo does not interact with the Chef server. Consequently, node-specific attributes must be located in a JSON file on the target system, a remote location (such as Amazon Simple Storage Service (S3)), or a web server on the local network._
+
 - Using Data Bags, Roles & Environments
+
+_chef-solo will look for data bags in /var/chef/data_bags, but this location can be modified by changing the setting in solo.rb._
+
+```
+data_bag_path '/var/chef-solo/data_bags'
+```
+
+_chef-solo will look for roles in /var/chef/roles, but this location can be modified by changing the setting for role_path in solo.rb._
+
+```
+role_path '/var/chef-solo/roles'
+```
+
+_chef-solo will look for environments in /var/chef/environments, but this location can be modified by changing the setting for environment_path in solo.rb._
+
+```
+environment_path '/var/chef-solo/environments'
+```
+
 - Chef-solo run intervals
-- Retreiving cookbooks from remote locations
+
+```
+-i SECONDS, --interval SECONDS
+```
+_The frequency (in seconds) at which the chef-client runs. When the chef-client is run at intervals, `--splay` and `--interval` values are applied before the chef-client run._
+
+ - Retrieving cookbooks from remote locations
+
+```
+-r RECIPE_URL, --recipe-url RECIPE_URL
+```
+_The URL location from which a remote cookbook tar.gz is to be downloaded._
+
 - Chef-solo and node object
+
+_Unlike chef-client, where the node object is stored on the Chef server, chef-solo stores its node objects as JSON files on local disk. By default, chef-solo stores these files in a nodes folder in the same directory as your cookbooks directory. You can control the location of this directory via the node_path value in your configuration file._
 
 # DATA BAGS
 
