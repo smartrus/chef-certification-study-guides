@@ -959,23 +959,95 @@ _Log Level	Syntax_
 # BOOTSTRAPPING
 
 ## USING KNIFE
+
 - Common ‘knife bootstrap’ options - UserName, Password, RunList, and Environment
+
+[knife bootstrap](https://docs.chef.io/knife_bootstrap.html)
+
+`-x USERNAME`, `--ssh-user USERNAME` - _The SSH user name._
+
+`-P PASSWORD`, `--ssh-password PASSWORD` - _The SSH password. This can be used to pass the password directly on the command line. If this option is not specified (and a password is required) knife prompts for the password._
+
+`-r RUN_LIST`, `--run-list RUN_LIST` - _A comma-separated list of roles and/or recipes to be applied._
+
+`-E ENVIRONMENT`, `--environment ENVIRONMENT` - _The name of the environment. When this option is added to a command, the command will run only against the named environment._
+
 - Using `winrm` & `ssh`
+
+_Use the `knife winrm` argument to create a connection to one or more remote machines. As each connection is created, a password must be provided. This argument uses the same syntax as the search subcommand. WinRM requires that a target node be accessible via the ports configured to support access via HTTP or HTTPS._
+
+```
+knife winrm SEARCH_QUERY SSH_COMMAND (options)
+```
+
+_Use the `knife ssh` subcommand to invoke SSH commands (in parallel) on a subset of nodes within an organization, based on the results of a search query made to the Chef server._
+
+```
+knife ssh SEARCH_QUERY SSH_COMMAND (options)
+```
+
 - Using knife plugins for bootstrap - `knife ec2 ..`, `knife bootstrap windows ...`
 
+```
+knife ec2 server create`
+```
+
+_Use the `bootstrap windows winrm` argument to bootstrap chef-client installations in a Microsoft Windows environment, using WinRM and the WS-Management protocol for communication. This argument requires the FQDN of the host machine to be specified. The Microsoft Installer Package (MSI) run silently during the bootstrap operation (using the /qn option). For example:_
+
+```
+knife bootstrap windows winrm FQDN
+```
+
 ## BOOTSTRAP OPTIONS
+
 - Validator' vs 'Validatorless' Bootstraps
+
+_The ORGANIZATION-validator.pem is typically added to the .chef directory on the workstation. When a node is bootstrapped from that workstation, the ORGANIZATION-validator.pem is used to authenticate the newly-created node to the Chef server during the initial chef-client run. Starting with Chef client 12.1, it is possible to bootstrap a node using the USER.pem file instead of the ORGANIZATION-validator.pem file. This is known as a “validatorless bootstrap”._
+
 - Bootstrapping in FIPS mode
+
+_If you have FIPS compliance enabled at the kernel level then chef-client will default to running in FIPS mode. Otherwise you can add `fips true` to the `/etc/chef/client.rb` or `C:\\chef\\client.rb.`_
+
+_Bootstrap a node using FIPS_
+
+```
+knife bootstrap 192.0.2.0 -P vanilla -x root -r 'recipe[apt],recipe[xfs],recipe[vim]' --fips
+```
+
 - What are Custom Templates
 
+[knife bootstrap](https://docs.chef.io/knife_bootstrap.html#custom-templates)
+
+_The default `chef-full` template uses the omnibus installer. For most bootstrap operations, regardless of the platform on which the target node is running, using the `chef-full` distribution is the best approach for installing the chef-client on a target node. In some situations, a custom template may be required._
+
 ## UNATTENDED INSTALLS
+
 - Configuring Unattended Installs
+
+[Bootstrap a Node](https://docs.chef.io/install_bootstrap.html#bootstrapping-with-user-data)
+
+_The method used to inject a user data script into a server will vary depending on the infrastructure platform being used. For example, on AWS you can pass this data in as a text file using the command line tool._
+
 - What conditions must exists for unattended install to take place?
 
+_It is important that settings in the `client.rb` file —`chef_server_url`, `http_proxy`, and so on are used—to ensure that configuration details are built into the unattended bootstrap process._
+
 ## FIRST CHEF-CLIENT RUN
+[Chef client overview](https://docs.chef.io/chef_client_overview.html)
+
 - How does authentication work during the first chef-client run?
+
+_During the first chef-client run, the private key `/etc/chef/client.pem` does not exist. Instead, the `chef-client` will attempt to use the private key assigned to the `chef-validator`, located in `/etc/chef/validation.pem`. (If, for any reason, the `chef-validator` is unable to make an authenticated request to the Chef server, the initial `chef-client` run will fail.) During the initial `chef-client` run, the `chef-client` will register with the Chef server using the private key assigned to the `chef-validator`, after which the `chef-client` will obtain a `client.pem` private key for all future authentication requests to the Chef server._
+
 - What is ‘ORGANIZATION-validator.pem’ file and when is it used?
+
+_During the first chef-client run, the private key `/etc/chef/client.pem` does not exist. Instead, the `chef-client` will attempt to use the private key assigned to the `chef-validator`, located in `/etc/chef/validation.pem`. (If, for any reason, the `chef-validator` is unable to make an authenticated request to the Chef server, the initial `chef-client` run will fail.) During the initial `chef-client` run, the `chef-client` will register with the Chef server using the private key assigned to the `chef-validator`, after which the `chef-client` will obtain a `client.pem` private key for all future authentication requests to the Chef server._
+
 - What is the ‘first-boot.json’ file?
+
+_On UNIX- and Linux-based machines: The second shell script executes the `chef-client` binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial `knife bootstrap` subcommand._
+
+_On Microsoft Windows machines: The batch file that is derived from the `windows-chef-client-msi.erb` bootstrap template executes the `chef-client` binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial `knife bootstrap` subcommand._
 
 # POLICY FILES
 
