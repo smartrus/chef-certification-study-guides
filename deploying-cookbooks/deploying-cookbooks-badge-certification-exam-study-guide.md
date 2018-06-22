@@ -2,6 +2,20 @@
 
 > The outline is copied from [training.chef.io - Deploying Cookbooks](https://training.chef.io/static/Deploying_Cookbooks.pdf). All the information is copied&pasted from [docs.chef.io documentation portal](https://docs.chef.io).
 
+_To obtain the Deploying Cookbooks badge you must show a proficiency around deploying Chef recipes and managing nodes._
+
+ _You should be able to:_
+
+- upload cookbooks to the Chef server
+- manage all cookbook dependencies using Berkshelf
+- bootstrap a node, and describe in detail what happens during this process, be able to discuss other methods for bringing a node under the control of Chef, e.g. using `knife plugins` (e.g. `knife ec2`), and be able to discuss and use the `firstboot.json`.
+- manage and configure Roles and Environments,
+- manage and configure multiple levels of attribute precedence
+- familiar with the internal workings and configuration of chef-client
+- familiar with the two-phases of operation
+- familiar with the authentication model
+- familiar with the use cases for Chef Solo
+
 # Badge Scope
 
 - Anatomy of a Chef Run
@@ -54,6 +68,10 @@ Local mode, Audit mode, FIPS mode, as a Service
 _Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo._
 
 _Local mode is a way to run the chef-client against the chef-repo on a local machine as if it were running against the Chef server. Local mode relies on chef-zero, which acts as a very lightweight instance of the Chef server. chef-zero reads and writes to the chef_repo_path, which allows all commands that normally work against the Chef server to be used against the local chef-repo._
+
+`-W`, `--dry-run` mode
+_Run the executable in why-run mode, which is a type of chef-client run that does everything except modify the system. Use why-run mode to understand why the chef-client makes the decisions that it makes and to learn more about the current and proposed state of the system._
+
 
 `--audit-mode`
 _The chef-client may be run in audit-mode. Use audit-mode to evaluate custom rules—also referred to as audits—that are defined in recipes_
