@@ -7,14 +7,58 @@ _To obtain the Deploying Cookbooks badge you must show a proficiency around depl
  _You should be able to:_
 
 - upload cookbooks to the Chef server
+
+```
+knife cookbook upload cookbook_name
+```
+
 - manage all cookbook dependencies using Berkshelf
+
+_Add `depends 'cookbook_name', 'version_number'` to metadata.rb. Then run:_
+
+```
+berks install
+```
+
 - bootstrap a node, and describe in detail what happens during this process, be able to discuss other methods for bringing a node under the control of Chef, e.g. using `knife plugins` (e.g. `knife ec2`), and be able to discuss and use the `firstboot.json`.
-- manage and configure Roles and Environments,
+
+[Bootstrap a node](https://docs.chef.io/install_bootstrap.html)
+
+[About run-lists](https://docs.chef.io/run_lists.html)
+
+_On UNIX- and Linux-based machines: The second shell script executes the chef-client binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial knife bootstrap subcommand.
+
+On Microsoft Windows machines: The batch file that is derived from the `windows-chef-client-msi.erb` bootstrap template executes the chef-client binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial knife bootstrap subcommand._
+
+- manage and configure Roles and Environments
+
+[About roles](https://docs.chef.io/roles.html)
+
+[About environments](https://docs.chef.io/environments.html)
+
 - manage and configure multiple levels of attribute precedence
+
+[About attributes](https://docs.chef.io/attributes.html)
+
 - familiar with the internal workings and configuration of chef-client
+
+[Chef client overview](https://docs.chef.io/chef_client_overview.html)
+
+[Chef-client executable](https://docs.chef.io/ctl_chef_client.html)
+
 - familiar with the two-phases of operation
+
+[Chef client overview](https://docs.chef.io/chef_client_overview.html)
+
 - familiar with the authentication model
+
+https://docs.chef.io/auth.html
+
 - familiar with the use cases for Chef Solo
+
+[About Chef solo](https://docs.chef.io/chef_solo.html)
+
+[Chef solo executable](https://docs.chef.io/ctl_chef_solo.html)
 
 # Badge Scope
 
