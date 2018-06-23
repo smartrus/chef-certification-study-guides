@@ -77,6 +77,8 @@ On Microsoft Windows machines: The batch file that is derived from the `windows-
 
 - familiar with the two-phases of operation
 
+[Compile vs Execute - Common functionality](https://docs.chef.io/resource_common.html)
+
 [Chef client overview](https://docs.chef.io/chef_client_overview.html)
 
 - familiar with the authentication model
