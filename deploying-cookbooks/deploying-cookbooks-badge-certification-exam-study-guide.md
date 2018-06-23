@@ -20,11 +20,34 @@ _Add `depends 'cookbook_name', 'version_number'` to metadata.rb. Then run:_
 berks install
 ```
 
-- bootstrap a node, and describe in detail what happens during this process, be able to discuss other methods for bringing a node under the control of Chef, e.g. using `knife plugins` (e.g. `knife ec2`), and be able to discuss and use the `firstboot.json`.
+- bootstrap a node, and describe in detail what happens during this process, be able to discuss other methods for bringing a node under the control of Chef, e.g. using `knife plugins` (e.g. `knife ec2`), and be able to discuss and use the `first-boot.json`.
 
 [Bootstrap a node](https://docs.chef.io/install_bootstrap.html)
 
 [About run-lists](https://docs.chef.io/run_lists.html)
+
+_`first-boot.json` looks like this:_
+
+```
+{
+  "run_list": ["recipe[foo]"],
+  "container_service": {
+    "chef-init-test": {
+      "command": "/opt/chef/bin/chef-init-test"
+    }
+  }
+}
+```
+
+_Here’s another example, for a minimal bootstrap:_
+
+```
+{
+  "run_list": ["recipe[company_base::default]"]
+}
+```
+
+`chef-client -j first-boot.json`
 
 _On UNIX- and Linux-based machines: The second shell script executes the chef-client binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial knife bootstrap subcommand.
 
