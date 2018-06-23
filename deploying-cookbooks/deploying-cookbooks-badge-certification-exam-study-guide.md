@@ -26,6 +26,12 @@ berks install
 
 [About run-lists](https://docs.chef.io/run_lists.html)
 
+[About knife cloud plugins](https://docs.chef.io/plugin_knife.html)
+
+```
+knife ec2 server create
+```
+
 _`first-boot.json` looks like this:_
 
 ```
