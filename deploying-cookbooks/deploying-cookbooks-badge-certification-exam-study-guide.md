@@ -1394,6 +1394,8 @@ _Safer Workflows: Policyfile encourages safer workflows by making it easier to p
 
 # SEARCH
 
+[About Search](https://docs.chef.io/chef_search.html)
+
 ## BASIC SEARCH USAGE
 
 - What information is indexed and available for search?
@@ -1512,18 +1514,42 @@ _Use :filter\_result as part of a search query to filter the search output based
 
 [About chef solo](https://docs.chef.io/chef_solo.html)
 
+[Run in local mode](https://docs.chef.io/ctl_chef_client.html#run-in-local-mode)
+
 - Advantages & disadvantages of Chef-solo vs Chef Server
 
 _chef-solo is a command that executes chef-client in a way that does not require the Chef server in order to converge cookbooks. chef-solo uses chef-client’s Chef local mode, and does not support the following functionality present in chef-client / server configurations:_
 
 _- Centralized distribution of cookbooks_
+
 _- A centralized API that interacts with and integrates infrastructure components_
+
 _- Authentication or authorization_
+
+_chef-zero does not save data between restarts. Because it is intended to be used locally, chef-zero does not perform input validation, authentication, or authorization, as these security measures are not necessary for local testing. For these reasons, we strongly recommend against using chef-zero as a persistent Chef server._
 
 - Chef-solo executable and options
 
+[chef-solo executable](https://docs.chef.io/ctl_chef_solo.html)
+
 ```
 chef-solo OPTION VALUE OPTION VALUE ...
+-c CONFIG, --config CONFIG
+-d, --daemonize
+-E ENVIRONMENT_NAME, --environment ENVIRONMENT_NAME
+-f, --[no-]fork
+-F FORMAT, --format FORMAT (doc or min)
+-g GROUP, --group GROUP (process group)
+-j PATH, --json-attributes PATH
+-l LEVEL, --log_level LEVEL
+-L LOGLOCATION, --logfile c
+--legacy-mode (not use chef zero)
+--minimal-ohai
+-N NODE_NAME, --node-name NODE_NAME
+-o RUN_LIST_ITEM, --override-runlist RUN_LIST_ITEM
+-r RECIPE_URL, --recipe-url RECIPE_URL
+-s SECONDS, --splay SECONDS (random number for chef-server runs)
+-u USER, --user USER (process user)
 ```
 
 - Cookbooks, nodes and attributes
@@ -1578,6 +1604,12 @@ _Unlike chef-client, where the node object is stored on the Chef server, chef-so
 
 # DATA BAGS
 
+[About data bags](https://docs.chef.io/data_bags.html)
+
+[Manage data bags](https://docs.chef.io/server_manage_data_bags.html)
+
+[knife data bag](https://docs.chef.io/knife_data_bag.html)
+
 ## WHAT IS A DATA_BAG
 
 - When might you use a data_bag?
@@ -1624,7 +1656,7 @@ _A data bag is a global variable that is stored as JSON data and is accessible f
 
 - Data_bag and Chef-solo
 
-_chef-solo can load data from a data bag as long as the contents of that data bag are accessible from a directory structure that exists on the same machine as chef-solo. The location of this directory is configurable using the data_bag_path option in the solo.rb file. The name of each sub-directory corresponds to a data bag and each JSON file within a sub-directory corresponds to a data bag item. Search is not available in recipes when they are run with chef-solo; use the data_bag() and data_bag_item() functions to access data bags and data bag items._
+_chef-solo can load data from a data bag as long as the contents of that data bag are accessible from a directory structure that exists on the same machine as chef-solo. The location of this directory is configurable using the data_bag_path option in the `solo.rb` file. The name of each sub-directory corresponds to a data bag and each JSON file within a sub-directory corresponds to a data bag item. Search is not available in recipes when they are run with chef-solo; use the `data_bag()` and `data_bag_item()` functions to access data bags and data bag items._
 
 ## DATA_BAG ENCRYPTION
 
@@ -1635,6 +1667,15 @@ _A data bag item is encrypted using a knife command similar to:_
 knife data bag create passwords mysql --secret-file /tmp/my_data_bag_key
 ```
 _where “passwords” is the name of the data bag, “mysql” is the name of the data bag item, and “/tmp/my_data_bag_key” is the path to the location in which the file that contains the secret-key is located. knife will ask for user credentials before the encrypted data bag item is saved._
+
+```
+-a, --all
+Upload all data bags found at the specified path.
+--secret SECRET
+The encryption key that is used for values contained within a data bag item. If secret is not specified, the chef-client looks for a secret at the path specified by the encrypted_data_bag_secret setting in the client.rb file.
+--secret-file FILE
+The path to the file that contains the encryption key.
+```
 
 - What is Chef Vault
 
