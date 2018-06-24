@@ -54,11 +54,13 @@ _Here’s another example, for a minimal bootstrap:_
 }
 ```
 
-`chef-client -j first-boot.json`
+```
+chef-client -j first-boot.json
+```
 
-_On UNIX- and Linux-based machines: The second shell script executes the chef-client binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial knife bootstrap subcommand.
+_On UNIX- and Linux-based machines: The second shell script executes the chef-client binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial knife bootstrap subcommand._
 
-On Microsoft Windows machines: The batch file that is derived from the `windows-chef-client-msi.erb` bootstrap template executes the chef-client binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial knife bootstrap subcommand._
+_On Microsoft Windows machines: The batch file that is derived from the `windows-chef-client-msi.erb` bootstrap template executes the chef-client binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial knife bootstrap subcommand._
 
 - manage and configure Roles and Environments
 
@@ -141,18 +143,21 @@ Here is a detailed breakdown of each area.
 Local mode, Audit mode, FIPS mode, as a Service
 
 `-z`, `--local-mode`
+
 _Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo._
 
 _Local mode is a way to run the chef-client against the chef-repo on a local machine as if it were running against the Chef server. Local mode relies on chef-zero, which acts as a very lightweight instance of the Chef server. chef-zero reads and writes to the chef_repo_path, which allows all commands that normally work against the Chef server to be used against the local chef-repo._
 
 `-W`, `--dry-run` mode
+
 _Run the executable in why-run mode, which is a type of chef-client run that does everything except modify the system. Use why-run mode to understand why the chef-client makes the decisions that it makes and to learn more about the current and proposed state of the system._
 
-
 `--audit-mode`
+
 _The chef-client may be run in audit-mode. Use audit-mode to evaluate custom rules—also referred to as audits—that are defined in recipes_
 
 `--fips`
+
 _Federal Information Processing Standards (FIPS) is a United States government computer security standard that specifies security requirements for cryptography_
 
 _The chef-client can be run as a daemon. Use the chef-client cookbook to configure the chef-client as a daemon. Add the default recipe to a node’s run-list, and then use attributes in that cookbook to configure the behavior of the chef-client._
@@ -162,9 +167,11 @@ _The chef-client can be run as a daemon. Use the chef-client cookbook to configu
 
 _A client.rb file is used to specify the configuration details for the chef-client._
 
-_On UNIX- and Linux-based machines, the default location for this file is /etc/chef/client.rb; on Microsoft Windows machines, the default location for this file is C:\chef\client.rb; use the --config option from the command line to change this location
-This file is not created by default
-When a client.rb file is present in the default location, the settings contained within that client.rb file will override the default configuration settings_
+_On UNIX- and Linux-based machines, the default location for this file is `/etc/chef/client.rb`; on Microsoft Windows machines, the default location for this file is `C:\chef\client.rb`; use the `--config` option from the command line to change this location_
+
+_This file is not created by default_
+
+_When a client.rb file is present in the default location, the settings contained within that client.rb file will override the default configuration settings_
 
 _A sample client.rb file that contains the most simple way to connect to_ https://manage.chef.io
 
@@ -178,7 +185,9 @@ client_key '/etc/chef/client.pem'
 ```
 
 ## COMPILE VS EXECUTE
+
 [Compile vs Execute - Common functionality](https://docs.chef.io/resource_common.html)
+
 _The chef-client processes recipes in two phases:_
 
 _First, each resource in the node object is identified and a resource collection is built. All recipes are loaded in a specific order, and then the actions specified within each of them are identified. This is also referred to as the “compile phase”._
@@ -189,7 +198,9 @@ _Typically, actions are processed during the execution phase of the chef-client 
 
 - What happens during the 'compile' phase?
 
-_The chef-client identifies each resource in the node object and builds the resource collection. Libraries are loaded first to ensure that all language extensions and Ruby classes are available to all resources. Next, attributes are loaded, followed by lightweight resources, and then all definitions (to ensure that any pseudo-resources within definitions are available). Finally, all recipes are loaded in the order specified by the expanded run-list. This is also referred to as the “compile phase”._
+_The chef-client identifies each resource in the node object and builds the resource collection. Libraries are loaded first to ensure that all language extensions and Ruby classes are available to all resources._
+
+_Next, attributes are loaded, followed by lightweight resources, and then all definitions (to ensure that any pseudo-resources within definitions are available). Finally, all recipes are loaded in the order specified by the expanded run-list. This is also referred to as the “compile phase”._
 
 - What happens during the 'execute' phase?
 
