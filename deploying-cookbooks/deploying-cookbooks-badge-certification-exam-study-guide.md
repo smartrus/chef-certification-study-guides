@@ -137,7 +137,7 @@ Here is a detailed breakdown of each area.
 
 - chef-client modes of operation
 
-[chef-client (executable)]https://docs.chef.io/ctl_chef_client.html
+[chef-client executable]https://docs.chef.io/ctl_chef_client.html
 Local mode, Audit mode, FIPS mode, as a Service
 
 `-z`, `--local-mode`
