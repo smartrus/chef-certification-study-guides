@@ -587,9 +587,9 @@ _PROS: A role is a way to define certain patterns and processes that exist acros
 
 [Policyfile](https://docs.chef.io/policyfile.html)
 
-_CONS: NO versioning for Roles. When running Chef without Policyfile roles are global objects. Changes to roles are applied immediately to any node that contains that role in its run-list. This can make it hard to update roles and in some use cases discourages using roles at all.
+_CONS: NO versioning for Roles. When running Chef without Policyfile roles are global objects. Changes to roles are applied immediately to any node that contains that role in its run-list. This can make it hard to update roles and in some use cases discourages using roles at all._
 
-Policyfile effectively replaces roles. Policyfile files are versioned automatically and new versions are applied to systems only when promoted._
+_Policyfile effectively replaces roles. Policyfile files are versioned automatically and new versions are applied to systems only when promoted._
 
 - The Role cookbook pattern
 
@@ -717,7 +717,7 @@ metadata
 cookbook "NAME" [, "VERSION_CONSTRAINT"] [, SOURCE_OPTIONS]
 ```
 
-_Running the install command also creates a Berksfile.lock, which represents exactly which cookbook versions Berkshelf installed. This file ensures that someone else can check the cookbook out of git and get exactly the same dependencies as you._
+_Running the install command also creates a `Berksfile.lock`, which represents exactly which cookbook versions Berkshelf installed. This file ensures that someone else can check the cookbook out of git and get exactly the same dependencies as you._
 
 _Use `berks install` to install cookbooks into the cache. This command generates the Berkshelf lock file that ensures consistency._
 
@@ -977,17 +977,17 @@ knife-vcenter
 knife-windows
 ```
 
-- What is 'knife ec2' plugin
+- What is 'knife ec2' plugin?
 
-_The knife ec2 subcommand is used to manage API-driven cloud servers that are hosted by Amazon EC2. ex:_
+_The knife ec2 subcommand is used to manage API-driven cloud servers that are hosted by Amazon EC2. For example:_
 
 ```
 knife ec2 server create -r 'role[webserver]' -I ami-cd0fd6be -f t2.micro --aws-access-key-id 'Your AWS Access Key ID' --aws-secret-access-key "Your AWS Secret Access Key"`
 ```
 
-- What is 'knife windows' plugin
+- What is 'knife windows' plugin?
 
-_The `knife windows` subcommand is used to configure and interact with nodes that exist on server and/or desktop machines that are running Microsoft Windows. Nodes are configured using WinRM, which allows native objects—batch scripts, Windows PowerShell scripts, or scripting library variables—to be called by external applications. The `knife windows` subcommand supports NTLM and Kerberos methods of authentication. ex:_
+_The `knife windows` subcommand is used to configure and interact with nodes that exist on server and/or desktop machines that are running Microsoft Windows. Nodes are configured using WinRM, which allows native objects—batch scripts, Windows PowerShell scripts, or scripting library variables—to be called by external applications. The `knife windows` subcommand supports NTLM and Kerberos methods of authentication. For example:_
 
 ```
 knife bootstrap windows winrm web1.cloudapp.net -r 'server::web' -x 'proddomain\webuser' -P 'password'
@@ -1024,6 +1024,105 @@ chef gem install PLUGIN_NAME
 [Troubleshooting](https://docs.chef.io/errors.html)
 
 _There are multiple causes of the Chef 401 “Unauthorized” error, so please use the sections by the link above to find the error message that most closely matches your output._
+
+_*Failed to authenticate as ORGANIZATION-validator*_
+
+```
+INFO: Client key /etc/chef/client.pem is not present - registering
+INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate as ORGANIZATION-validator. Ensure that your node_name and client key are correct.
+FATAL: Stacktrace dumped to c:/chef/cache/chef-stacktrace.out
+FATAL: Net::HTTPServerException: 401 "Unauthorized"
+```
+
+_1) Check if the ORGANIZATION-validator.pem file exists in one of the following locations:_
+
+```
+~/.chef
+~/projects/current_project/.chef
+/etc/chef
+```
+
+_2) If there’s no ORGANIZATION-validator.pem file, regenerate it._
+
+_*Failed to authenticate to https://api.opscode.com *_
+
+```
+ERROR: Failed to authenticate to https://api.opscode.com/organizations/ORGANIZATION as USERNAME with key /path/to/USERNAME.pem
+Response:  Failed to authenticate as USERNAME. Ensure that your node_name and client key are correct.
+```
+
+_1) Verify you have the correct values in your knife.rb file, especially for the node_name and client_key settings._
+
+_2) Check if the file referenced in the client_key setting (usually USER.pem) exists_
+
+_3) If there’s no client.rb file, regenerate it and ensure the values for the node_name and client_key settings are correct._
+
+_* Organization not found *_
+
+_If you see this error when trying to recreate the ORGANIZATION-validator.pem, it’s possible that the chef-client itself was deleted. In this situation, the ORGANIZATION-validator.pem will need to be recreated_
+
+_*Synchronize the clock on your host*_
+
+_If the system clock drifts more than 15 minutes from the actual time, the following type of error will be shown:_
+
+```
+INFO: Client key /etc/chef/client.pem is not present - registering
+INFO: HTTP Request Returned 401 Unauthorized: Failed to authenticate as ORGANIZATION-validator. Synchronize the clock on your host.
+FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+FATAL: Net::HTTPServerException: 401 "Unauthorized"
+```
+
+_*All other 401 errors*_
+
+_1) Make sure your client.pem is valid._
+
+_2) Make sure to use the same node_name as the initial chef-client run._
+_Run chef-client -l debug_
+
+_*403 Forbidden*_
+
+```
+FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
+FATAL: Net::HTTPServerException: 403 "Forbidden"
+```
+
+_In Chef, there are two different types of permissions issues, object specific and global permissions. To figure out which type of permission issue you’re experiencing, run the `chef-client` again using the `-l debug` options to see debugging output._
+
+```
+DEBUG: Sending HTTP Request to https://api.opscode.com/organizations/ORGNAME/nodes
+ERROR: Running exception handlers
+```
+
+_1) Fix the global permissions: Log in to the Chef management console and click on the failing object type (most likely Nodes)_
+
+_2) fix object permissions: Log in to the Chef management console and click on the failing object type (most likely Nodes). Click on the object in the list that is causing the error._
+
+_*500 (Unexpected)*_
+
+_HTTP 500 is a non-specific error message. The full error message for the error the chef-client is receiving can be found in one of the following log ﬁles:_
+
+```
+/var/log/opscode/opscode-account/current
+/var/log/opscode/opscode-erchef/current
+```
+
+_*502 / 504 (Gateway)*_
+
+```
+$ grep 'HTTP/1.1" 504' /var/log/opscode/nginx/access.log
+$ grep 'HTTP/1.1" 504' nginx-access.log | cut -d' ' -f8 | sort | uniq -c | sort
+$ tail -10000 nginx-access.log | grep 'HTTP/1.1" 504' | cut -d' ' -f8 | sort | uniq -c | sort
+```
+
+_*Cannot find config file*_
+
+_Work around this issue by supplying the full path to the client.rb file:_
+
+```
+$ chef-client -c /etc/chef/client.rb
+```
+
+_When the values for certain settings in the client.rb file—node_name and client_key—are incorrect, it will not be possible to authenticate to the Chef server._
 
 - Using `knife ssl check` command
 
