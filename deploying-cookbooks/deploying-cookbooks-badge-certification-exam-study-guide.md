@@ -1301,9 +1301,29 @@ $ knife bootstrap 123.456.7.8 -x username -P password --sudo --bootstrap-templat
 
 [Bootstrap a Node](https://docs.chef.io/install_bootstrap.html#bootstrapping-with-user-data)
 
+_When the chef-client is installed using an unattended bootstrap, it may be built into an image that starts the chef-client on boot, or installed using User Data or some other kind of post-deployment script. The type of image or User Data used depends on the platform on which the unattended bootstrap will take place._
+
 _The method used to inject a user data script into a server will vary depending on the infrastructure platform being used. For example, on AWS you can pass this data in as a text file using the command line tool._
 
+_Setting the initial run-list_
+
+_A node’s initial run-list is specified using a JSON file on the host system. When running the chef-client as an executable, use the -j option to tell the chef-client which JSON file to use. For example:_
+
+```
+$ chef-client -j /etc/chef/first-boot.json --environment _default
+```
+
 - What conditions must exists for unattended install to take place?
+
+_Must be able to authenticate to the Chef server_
+
+_Must be able to configure a run-list_
+
+_May require custom attributes, depending on the cookbooks that are being used_
+
+_Must be able to access the `chef-validator.pem` so that it may create a new identity on the Chef server_
+
+_Must have a unique node name; the chef-client will use the FQDN for the host system by default_
 
 _It is important that settings in the `client.rb` file —`chef_server_url`, `http_proxy`, and so on are used—to ensure that configuration details are built into the unattended bootstrap process._
 
