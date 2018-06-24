@@ -1253,6 +1253,8 @@ knife ssh SEARCH_QUERY SSH_COMMAND (options)
 
 - Using knife plugins for bootstrap - `knife ec2 ..`, `knife bootstrap windows ...`
 
+_Amazon EC2 is a web service that provides resizable compute capacity in the cloud, based on preconfigured operating systems and virtual application software using Amazon Machine Images (AMI). The knife ec2 subcommand is used to manage API-driven cloud servers that are hosted by Amazon EC2._
+
 ```
 knife ec2 server create
 ```
@@ -1284,6 +1286,14 @@ knife bootstrap 192.0.2.0 -P vanilla -x root -r 'recipe[apt],recipe[xfs],recipe[
 [knife bootstrap](https://docs.chef.io/knife_bootstrap.html#custom-templates)
 
 _The default `chef-full` template uses the omnibus installer. For most bootstrap operations, regardless of the platform on which the target node is running, using the `chef-full` distribution is the best approach for installing the chef-client on a target node. In some situations, a custom template may be required._
+
+_For example, the default bootstrap operation relies on an Internet connection to get the distribution to the target node. If a target node cannot access the Internet, then a custom template can be used to define a specific location for the distribution so that the target node may access it during the bootstrap operation._
+
+_You can use the --bootstrap-template option with the knife bootstrap subcommand to specify the name of your bootstrap template file:_
+
+```
+$ knife bootstrap 123.456.7.8 -x username -P password --sudo --bootstrap-template "template"
+```
 
 ## UNATTENDED INSTALLS
 
