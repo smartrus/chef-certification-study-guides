@@ -1254,7 +1254,7 @@ knife ssh SEARCH_QUERY SSH_COMMAND (options)
 - Using knife plugins for bootstrap - `knife ec2 ..`, `knife bootstrap windows ...`
 
 ```
-knife ec2 server create`
+knife ec2 server create
 ```
 
 _Use the `bootstrap windows winrm` argument to bootstrap chef-client installations in a Microsoft Windows environment, using WinRM and the WS-Management protocol for communication. This argument requires the FQDN of the host machine to be specified. The Microsoft Installer Package (MSI) run silently during the bootstrap operation (using the /qn option). For example:_
