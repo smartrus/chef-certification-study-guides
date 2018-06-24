@@ -512,7 +512,7 @@ end
 - Bootstrapping a node into a particular Environment
 
 ```
-knife bootstrap <IPorFQDN> --run-list 'cookbook::default' --environment 'dev' -x 'annie' -i '~/.ssh/id_rsa' --
+knife bootstrap <IP or FQDN> --run-list 'cookbook' --environment 'dev' -x 'rustem' -i '~/.ssh/id_rsa' --
 sudo -N 'prep-node'
 ```
 
