@@ -239,6 +239,7 @@ updated_resources
 ```
 
 - What is ‘run_state’?
+
  [About recipes](https://docs.chef.io/recipes.html#node-run-state)
 
 _Use node.run_state to stash transient data during a chef-client run. This data may be passed between resources, and then evaluated during the execution phase. run_state is an empty Hash that is always discarded at the end of the chef-client run._
@@ -254,13 +255,14 @@ _2) Keeps a unique list of resources (keyed as `type[name]`) used for notificati
 
 ## AUTHENTICATION
 - How does the chef-client authenticate with the Chef Server?
+
 [Authentication, authorization](https://docs.chef.io/auth.html)
 
-_The authentication process ensures the Chef server responds only to requests made by trusted users. Public key encryption is used by the Chef server. When a node and/or a workstation is configured to run the chef-client, both public and private keys are created. The public key is stored on the Chef server, while the private key is returned to the user for safe keeping. (The private key is a .pem file located in the .chef directory or in /etc/chef.)
+_The authentication process ensures the Chef server responds only to requests made by trusted users. Public key encryption is used by the Chef server. When a node and/or a workstation is configured to run the chef-client, both public and private keys are created. The public key is stored on the Chef server, while the private key is returned to the user for safe keeping. (The private key is a .pem file located in the .chef directory or in /etc/chef.)_
 
-Both the chef-client and knife use the Chef server API when communicating with the Chef server. The chef-validator uses the Chef server API, but only during the first chef-client run on a node.
+_Both the chef-client and knife use the Chef server API when communicating with the Chef server. The chef-validator uses the Chef server API, but only during the first chef-client run on a node._
 
-Each request to the Chef server from those executables sign a special group of HTTP headers with the private key. The Chef server then uses the public key to verify the headers and verify the contents._
+_Each request to the Chef server from those executables sign a special group of HTTP headers with the private key. The Chef server then uses the public key to verify the headers and verify the contents._
 
 - Authentication and using NTP
 
@@ -280,8 +282,9 @@ definitions, recipes?
 
 [Chef Client Overview](https://docs.chef.io/chef_client_overview.html)
 
-_Libraries -> Attributes -> LWRP -> Definitions -> Recipes
-Libraries are loaded first to ensure that all language extensions and Ruby classes are available to all resources. Next, attributes are loaded, followed by lightweight resources, and then all definitions (to ensure that any pseudo-resources within definitions are available). Finally, all recipes are loaded in the order specified by the expanded run-list._
+_Libraries -> Attributes -> LWRP -> Definitions -> Recipes_
+
+_Libraries are loaded first to ensure that all language extensions and Ruby classes are available to all resources. Next, attributes are loaded, followed by lightweight resources, and then all definitions (to ensure that any pseudo-resources within definitions are available). Finally, all recipes are loaded in the order specified by the expanded run-list._
 
 ## CONVERGENCE
 
@@ -292,6 +295,7 @@ Libraries are loaded first to ensure that all language extensions and Ruby class
 _Each resource is executed in the order identified by the run-list, and then by the order in which each resource is listed in each recipe. Each resource in the resource collection is mapped to a provider. The provider examines the node, and then does the steps necessary to complete the action. And then the next resource is processed. Each action configures a specific part of the system. This process is also referred to as convergence. This is also referred to as the “execution phase”._
 
 - The test/repair model
+
 [Learn the Chef basics](https://learn.chef.io/modules/learn-the-basics#/)
 
 _Chef applies changes only when they are necessary._
@@ -299,6 +303,7 @@ _Chef applies changes only when they are necessary._
 _Each resource in the resource collection is mapped to a provider. The provider examines the node (tests), and then does the steps necessary to complete the action (repairs)_
 
 - When do notifications get invoked?
+
 [Common resources](https://docs.chef.io/resource_common.html#notifications)
 
 _A notification is a property on a resource that listens to other resources in the resource collection and then takes actions based on the notification type (notifies or subscribes)._
@@ -308,6 +313,7 @@ _A resource may notify another resource to take action when its state changes._
 _By default, notifications are :delayed, that is they are queued up as they are triggered, and then executed at the very end of a chef-client run. To run an action immediately, use :immediately:_
 
 - What happens if there are multiple start notifications for a particular resource?
+
 [StackOverFlow qa](https://stackoverflow.com/questions/28409969/chef-regarding-multiple-calls-to-the-same-resource-and-about-services)
 
 _In this case the notifications are added to the notification stack, not the resource stack. The code to add to the notification stack will first look for an existing notification. If it finds one, then it will NOT add another._
@@ -319,6 +325,7 @@ _When all of the actions identified by resources in the resource collection have
 > node.save can be used to send the node data immediately
 
 ## WHY-RUN
+
 [Chef Client Overview](https://docs.chef.io/chef_client_overview.html)
 
 - What is the purpose of ‘why-run’
@@ -326,6 +333,7 @@ _When all of the actions identified by resources in the resource collection have
 _why-run mode is a way to see what the chef-client would have configured, had an actual chef-client run occurred. This approach is similar to the concept of “no-operation” (or “no-op”): decide what should be done, but then don’t actually do anything until it’s done right. This approach to configuration management can help identify where complexity exists in the system, where inter-dependencies may be located, and to verify that everything will be configured in the desired manner._
 
 - How do you invoke a ‘why-run’
+
 [chef-client.rb (executable)](https://docs.chef.io/ctl_chef_client.html)
 
 `-W`, `--why-run`
@@ -336,6 +344,7 @@ _Run the executable in why-run mode, which is a type of chef-client run that doe
 _If the action is :start and the service is not running, then start the service (if it is not running) and do nothing (if it is running). What about a service that is installed from a package? The chef-client cannot check to see if the service is running until after the package is installed. A simple question that why-run mode can answer is what the chef-client would say about the state of the service after installing the package because service actions often trigger notifications to other resources. So it can be important to know in advance that any notifications are being triggered correctly._
 
 # ENVIRONMENTS
+
 [About environments](https://docs.chef.io/environments.html)
 
 ## WHAT IS AN ENVIRONMENT/USE CASES
@@ -418,6 +427,7 @@ _`default` and `override`_
 - Overriding Role attributes
 
 `override`
+
 _Applying environment override attributes after role override attributes allows the same role to be used across multiple environments, yet ensuring that values can be set that are specific to each environment (when required)._
 
 - Syntax for setting cookbook constraints.
@@ -470,6 +480,7 @@ end
 ```
 
 - Environment specific knife plugins, e.g. `knife flip`
+
 [Community plugins](https://docs.chef.io/plugin_community.html)
 
 `knife-flip` - _A knife plugin to move a node, or all nodes in a role, to a specific environment_
@@ -815,6 +826,7 @@ chef_server_url 'https://localhost/organizations/ORG_NAME'
 ```
 
 - How does knife authenticate with Chef Server
+
 [Authentication, Authorization](https://docs.chef.io/auth.html#api-requests)
 
 _During the initial chef-client run, the chef-client will register with the Chef server using the private key assigned to the chef-validator, after which the chef-client will obtain a client.pem private key for all future authentication requests to the Chef server._
@@ -876,6 +888,7 @@ $ knife ssl check https://www.chef.io
 `.chef/knife.rb`
 
 - Common options - cookbook_path, validation_key, chef_server_url, validation_key
+
 [config.rb](https://docs.chef.io/config_rb_knife.html)
 
 ```
@@ -1005,11 +1018,13 @@ chef gem install PLUGIN_NAME
 ## TROUBLESHOOTING
 
 - Troubleshooting Authentication
+
 [Troubleshooting](https://docs.chef.io/errors.html)
 
 _There are multiple causes of the Chef 401 “Unauthorized” error, so please use the sections by the link above to find the error message that most closely matches your output._
 
 - Using `knife ssl check` command
+
 [knife ssl](https://docs.chef.io/knife_ssl_check.html)
 
 _Use the `knife ssl check` subcommand to verify the SSL configuration for the Chef server or a location specified by a URL or URI. Invalid certificates will not be used by OpenSSL. When this command is run, the certificate files (`*.crt` and/or `*.pem`) that are located in the `/.chef/trusted_certs` directory are checked to see if they have valid X.509 certificate properties. A warning is returned when certificates do not have valid X.509 certificate properties or if the `/.chef/trusted_certs` directory does not contain any certificates._
@@ -1126,6 +1141,7 @@ _The method used to inject a user data script into a server will vary depending 
 _It is important that settings in the `client.rb` file —`chef_server_url`, `http_proxy`, and so on are used—to ensure that configuration details are built into the unattended bootstrap process._
 
 ## FIRST CHEF-CLIENT RUN
+
 [Chef client overview](https://docs.chef.io/chef_client_overview.html)
 
 - How does authentication work during the first chef-client run?
@@ -1143,6 +1159,7 @@ _On UNIX- and Linux-based machines: The second shell script executes the `chef-c
 _On Microsoft Windows machines: The batch file that is derived from the `windows-chef-client-msi.erb` bootstrap template executes the `chef-client` binary with a set of initial settings stored within `first-boot.json` on the node. `first-boot.json` is generated from the workstation as part of the initial `knife bootstrap` subcommand._
 
 # POLICY FILES
+
 [About policyfile](https://docs.chef.io/policyfile.html)
 
 ## BASIC KNOWLEDGE AND USAGE
@@ -1305,6 +1322,7 @@ _Use :filter\_result as part of a search query to filter the search output based
 # CHEF SOLO
 
 ## WHAT CHEF SOLO IS
+
 [About chef solo](https://docs.chef.io/chef_solo.html)
 
 - Advantages & disadvantages of Chef-solo vs Chef Server
