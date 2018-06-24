@@ -1025,7 +1025,7 @@ chef gem install PLUGIN_NAME
 
 _There are multiple causes of the Chef 401 “Unauthorized” error, so please use the sections by the link above to find the error message that most closely matches your output._
 
-_*Failed to authenticate as ORGANIZATION-validator*_
+*Failed to authenticate as ORGANIZATION-validator*
 
 ```
 INFO: Client key /etc/chef/client.pem is not present - registering
@@ -1044,7 +1044,7 @@ _1) Check if the ORGANIZATION-validator.pem file exists in one of the following 
 
 _2) If there’s no ORGANIZATION-validator.pem file, regenerate it._
 
-_*Failed to authenticate to https://api.opscode.com *_
+*Failed to authenticate to https://api.opscode.com*
 
 ```
 ERROR: Failed to authenticate to https://api.opscode.com/organizations/ORGANIZATION as USERNAME with key /path/to/USERNAME.pem
@@ -1057,11 +1057,11 @@ _2) Check if the file referenced in the client_key setting (usually USER.pem) ex
 
 _3) If there’s no client.rb file, regenerate it and ensure the values for the node_name and client_key settings are correct._
 
-_* Organization not found *_
+*Organization not found*
 
 _If you see this error when trying to recreate the ORGANIZATION-validator.pem, it’s possible that the chef-client itself was deleted. In this situation, the ORGANIZATION-validator.pem will need to be recreated_
 
-_*Synchronize the clock on your host*_
+*Synchronize the clock on your host*
 
 _If the system clock drifts more than 15 minutes from the actual time, the following type of error will be shown:_
 
@@ -1072,14 +1072,14 @@ FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
 FATAL: Net::HTTPServerException: 401 "Unauthorized"
 ```
 
-_*All other 401 errors*_
+*All other 401 errors*
 
 _1) Make sure your client.pem is valid._
 
 _2) Make sure to use the same node_name as the initial chef-client run._
 _Run chef-client -l debug_
 
-_*403 Forbidden*_
+*403 Forbidden*
 
 ```
 FATAL: Stacktrace dumped to /var/chef/cache/chef-stacktrace.out
@@ -1097,7 +1097,7 @@ _1) Fix the global permissions: Log in to the Chef management console and click 
 
 _2) fix object permissions: Log in to the Chef management console and click on the failing object type (most likely Nodes). Click on the object in the list that is causing the error._
 
-_*500 (Unexpected)*_
+*500 (Unexpected)*
 
 _HTTP 500 is a non-specific error message. The full error message for the error the chef-client is receiving can be found in one of the following log ﬁles:_
 
@@ -1106,7 +1106,7 @@ _HTTP 500 is a non-specific error message. The full error message for the error 
 /var/log/opscode/opscode-erchef/current
 ```
 
-_*502 / 504 (Gateway)*_
+*502 / 504 (Gateway)*
 
 ```
 $ grep 'HTTP/1.1" 504' /var/log/opscode/nginx/access.log
@@ -1114,7 +1114,7 @@ $ grep 'HTTP/1.1" 504' nginx-access.log | cut -d' ' -f8 | sort | uniq -c | sort
 $ tail -10000 nginx-access.log | grep 'HTTP/1.1" 504' | cut -d' ' -f8 | sort | uniq -c | sort
 ```
 
-_*Cannot find config file*_
+*Cannot find config file*
 
 _Work around this issue by supplying the full path to the client.rb file:_
 
