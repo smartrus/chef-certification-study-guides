@@ -29,8 +29,10 @@ berks install
 
 [About knife cloud plugins](https://docs.chef.io/plugin_knife.html)
 
+_The knife ec2 subcommand is used to manage API-driven cloud servers that are hosted by Amazon EC2:_
+
 ```
-knife ec2 server create
+knife ec2 server create -r 'role[webserver]' -I ami-cd0fd6be -f t2.micro --aws-access-key-id 'Your AWS Access Key ID' --aws-secret-access-key "Your AWS Secret Access Key"
 ```
 
 _`first-boot.json` looks like this:_
