@@ -1,7 +1,9 @@
 # Study Guide for DEPLOYING COOKBOOKS BADGE CERTIFICATION EXAM
 
 > The outline is copied from [training.chef.io - Deploying Cookbooks](https://training.chef.io/static/Deploying_Cookbooks.pdf). All the information is copied&pasted from [docs.chef.io documentation portal](https://docs.chef.io).
-> Have a look to Annie's awesome work: https://github.com/anniehedgpeth/chef-certification-study-guides/tree/master/deploying-cookbooks
+> Have a look at Annie's awesome work: https://github.com/anniehedgpeth/chef-certification-study-guides/tree/master/deploying-cookbooks
+
+> Check out my blog post - http://blog.rustem.pro/how-to-pass-chef-certifications/
 
 _To obtain the Deploying Cookbooks badge you must show a proficiency around deploying Chef recipes and managing nodes._
 
@@ -1723,3 +1725,5 @@ _if you are in the “admins” directory and make changes to the file charlie.j
 ```
 knife data bag from file admins charlie.json
 ```
+
+> Finally, check out my blog post - http://blog.rustem.pro/how-to-pass-chef-certifications/
